@@ -1,4 +1,4 @@
-Copyright (c) 2026 [Yoangel De Dios Nícolas Gómez Gómez/Isla Digital]. Todos los derechos reservados.
+Copyright (c) 2026 Yoangel De Dios Nícolas Gómez Gómez/Isla Digital. Todos los derechos reservados.
 # Isla Digital
 
 Aplicación educativa multiplataforma para niños de 3-8 años de Nueva Esparta, Venezuela.
@@ -91,5 +91,4 @@ lib/
 Proyecto educativo para la comunidad de Nueva Esparta, Venezuela.
 
 ## Contacto
-[![Telegram](https://img.shields.io/badge/Telegram-Asistencia-000000?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/LiebeBlack0)
-Copyright (c) 2026 [Yoangel De Dios Nícolas Gómez Gómez/Isla Digital]. Todos los derechos reservados.
+[![Telegram](https://img.shields.io/badge/Telegram-Asistencia-000000?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/LiebeBlack) 
