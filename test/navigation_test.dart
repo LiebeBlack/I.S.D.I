@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isla_digital/main.dart';
-import 'package:isla_digital/ui/levels/level1/level1_screen.dart';
-import 'package:isla_digital/ui/levels/level2/level2_screen.dart';
-import 'package:isla_digital/ui/levels/level3/level3_screen.dart';
-import 'package:isla_digital/ui/levels/level4/level4_screen.dart';
-import 'package:isla_digital/ui/levels/level5/level5_screen.dart';
-import 'package:isla_digital/ui/screens/home_screen.dart';
-import 'package:isla_digital/ui/screens/level_select_screen.dart';
-import 'package:isla_digital/ui/screens/parental_dashboard_screen.dart';
-import 'package:isla_digital/ui/screens/profile_setup_screen.dart';
+import 'package:isla_digital/presentation/views/levels/level1/level1_screen.dart';
+import 'package:isla_digital/presentation/views/levels/level2/level2_screen.dart';
+import 'package:isla_digital/presentation/views/levels/level3/level3_screen.dart';
+import 'package:isla_digital/presentation/views/levels/level4/level4_screen.dart';
+import 'package:isla_digital/presentation/views/levels/level5/level5_screen.dart';
+import 'package:isla_digital/presentation/views/screens/home_screen.dart';
+import 'package:isla_digital/presentation/views/screens/level_select_screen.dart';
+import 'package:isla_digital/presentation/views/screens/parental_dashboard_screen.dart';
+import 'package:isla_digital/presentation/views/screens/profile_setup_screen.dart';
 
 /// Tests de navegación para verificar el flujo entre pantallas y niveles
 void main() {
@@ -380,8 +380,8 @@ void main() {
     testWidgets('Navigation works on small screens',
         (WidgetTester tester) async {
       // Configurar tamaño de pantalla pequeño (teléfono)
-      tester.binding.window.physicalSizeTestValue = const Size(400, 800);
-      tester.binding.window.devicePixelRatioTestValue = 1.0;
+      tester.view.physicalSize = const Size(400, 800);
+      tester.view.devicePixelRatio = 1.0;
 
       await tester.pumpWidget(
         const ProviderScope(
@@ -394,14 +394,15 @@ void main() {
       expect(find.byType(ProfileSetupScreen), findsOneWidget);
 
       // Restaurar
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
     });
 
     testWidgets('Navigation works on tablet/desktop screens',
         (WidgetTester tester) async {
       // Configurar tamaño de pantalla grande
-      tester.binding.window.physicalSizeTestValue = const Size(1200, 800);
-      tester.binding.window.devicePixelRatioTestValue = 1.0;
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1.0;
 
       await tester.pumpWidget(
         const ProviderScope(
@@ -414,7 +415,8 @@ void main() {
       expect(find.byType(ProfileSetupScreen), findsOneWidget);
 
       // Restaurar
-      addTearDown(tester.binding.window.clearPhysicalSizeTestValue);
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
     });
   });
 }

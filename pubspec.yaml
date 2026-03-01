@@ -12,23 +12,25 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   
-  # Estado
-  flutter_riverpod: ^2.4.9
+  # Estado (Riverpod 2.6+ for 2026)
+  flutter_riverpod: ^2.6.0
   
-  # UI/UX
-  google_fonts: ^6.1.0
-  flutter_svg: ^2.0.9
-  lottie: ^2.7.0
+  # UI/UX & Animations
+  google_fonts: ^6.2.1
+  flutter_svg: ^2.0.10+1
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.1
   
   # Audio
-  audioplayers: ^5.2.1
+  audioplayers: ^6.0.0
   
   # Almacenamiento local
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.3.2
   
   # Utilidades
-  intl: 0.20.2
+  intl: ^0.20.2
   confetti: ^0.7.0
+  vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:

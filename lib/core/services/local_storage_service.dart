@@ -1,9 +1,10 @@
 import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:isla_digital/domain/models/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/models.dart';
 
 /// Servicio de persistencia local usando SharedPreferences
-/// Almacena el perfil del niño, configuración parental y progreso
 class LocalStorageService {
   static const String _profileKey = 'child_profile';
   static const String _settingsKey = 'parental_settings';
@@ -11,138 +12,112 @@ class LocalStorageService {
   static const String _playTimeKey = 'total_play_time';
   static const String _lastSessionKey = 'last_session';
 
-  static late SharedPreferences _prefs;
+  static SharedPreferences? _prefs;
 
-  /// Inicializar el servicio de almacenamiento
+  /// Inicializar el servicio. Se debe llamar en el main.dart
   static Future<void> initialize() async {
+    if (_prefs != null) return;
     try {
       _prefs = await SharedPreferences.getInstance();
+      debugPrint('💾 LocalStorageService: Inicializado correctamente');
     } catch (e) {
-      // Manejar error de inicialización
-      throw Exception('No se pudo inicializar SharedPreferences: $e');
+      debugPrint('❌ Error al inicializar SharedPreferences: $e');
+      rethrow;
     }
   }
 
-  /// Guardar perfil del niño
-  static Future<bool> saveProfile(ChildProfile profile) async {
-    final jsonString = jsonEncode(profile.toJson());
-    return await _prefs.setString(_profileKey, jsonString);
+  /// Getter privado para asegurar que SharedPreferences esté listo
+  static SharedPreferences get _p {
+    if (_prefs == null) {
+      throw Exception('LocalStorageService no ha sido inicializado. Llama a initialize() primero.');
+    }
+    return _prefs!;
   }
 
-  /// Cargar perfil del niño
+  // --- PERFIL ---
+
+  static Future<bool> saveProfile(ChildProfile profile) async {
+    final jsonString = jsonEncode(profile.toJson());
+    return await _p.setString(_profileKey, jsonString);
+  }
+
   static ChildProfile? loadProfile() {
     try {
-      final jsonString = _prefs.getString(_profileKey);
+      final jsonString = _p.getString(_profileKey);
       if (jsonString == null || jsonString.isEmpty) return null;
-
-      final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      return ChildProfile.fromJson(json);
+      return ChildProfile.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
     } catch (e) {
-      // Manejar error de parsing
+      debugPrint('❌ Error al cargar perfil: $e');
       return null;
     }
   }
 
-  /// Eliminar perfil
   static Future<bool> deleteProfile() async {
-    return await _prefs.remove(_profileKey);
+    return await _p.remove(_profileKey);
   }
 
-  /// Guardar configuración parental
+  // --- CONFIGURACIÓN PARENTAL ---
+
   static Future<bool> saveParentalSettings(ParentalSettings settings) async {
-    return await _prefs.setString(_settingsKey, jsonEncode(settings.toJson()));
+    return await _p.setString(_settingsKey, jsonEncode(settings.toJson()));
   }
 
-  /// Cargar configuración parental
   static ParentalSettings loadParentalSettings() {
     try {
-      final jsonString = _prefs.getString(_settingsKey);
-      if (jsonString == null || jsonString.isEmpty) {
-        return const ParentalSettings();
-      }
-
-      final json = jsonDecode(jsonString) as Map<String, dynamic>;
-      return ParentalSettings.fromJson(json);
+      final jsonString = _p.getString(_settingsKey);
+      if (jsonString == null || jsonString.isEmpty) return const ParentalSettings();
+      return ParentalSettings.fromJson(jsonDecode(jsonString) as Map<String, dynamic>);
     } catch (e) {
-      // Manejar error de parsing
       return const ParentalSettings();
     }
   }
 
-  /// Guardar tiempo de juego total
+  // --- TIEMPO DE JUEGO Y SESIÓN ---
+
   static Future<bool> savePlayTime(int minutes) async {
-    return await _prefs.setInt(_playTimeKey, minutes);
+    return await _p.setInt(_playTimeKey, minutes);
   }
 
-  /// Cargar tiempo de juego total
-  static int loadPlayTime() {
-    return _prefs.getInt(_playTimeKey) ?? 0;
-  }
+  static int loadPlayTime() => _p.getInt(_playTimeKey) ?? 0;
 
-  /// Agregar tiempo de juego
   static Future<int> addPlayTime(int minutes) async {
-    final current = loadPlayTime();
-    final updated = current + minutes;
+    final updated = loadPlayTime() + minutes;
     await savePlayTime(updated);
     return updated;
   }
 
-  /// Guardar sesión
   static Future<bool> saveLastSession() async {
-    return await _prefs.setString(
-        _lastSessionKey, DateTime.now().toIso8601String());
+    return await _p.setString(_lastSessionKey, DateTime.now().toIso8601String());
   }
 
-  /// Cargar última sesión
   static DateTime? loadLastSession() {
-    try {
-      final dateString = _prefs.getString(_lastSessionKey);
-      if (dateString == null || dateString.isEmpty) return null;
-      return DateTime.tryParse(dateString);
-    } catch (e) {
-      // Manejar error de parsing
-      return null;
-    }
+    final dateString = _p.getString(_lastSessionKey);
+    return (dateString != null) ? DateTime.tryParse(dateString) : null;
   }
 
-  /// Verificar si es un nuevo día
   static bool isNewDay() {
     final lastSession = loadLastSession();
     if (lastSession == null) return true;
-
     final now = DateTime.now();
-    return lastSession.day != now.day ||
-        lastSession.month != now.month ||
-        lastSession.year != now.year;
+    return lastSession.day != now.day || 
+           lastSession.month != now.month || 
+           lastSession.year != now.year;
   }
 
-  /// Guardar progreso de nivel
+  // --- PROGRESO E INSIGNIAS ---
+
   static Future<bool> saveLevelProgress(String levelId, int progress) async {
-    return await _prefs.setInt('progress_$levelId', progress);
+    return await _p.setInt('progress_$levelId', progress);
   }
 
-  /// Cargar progreso de nivel
-  static int loadLevelProgress(String levelId) {
-    return _prefs.getInt('progress_$levelId') ?? 0;
-  }
+  static int loadLevelProgress(String levelId) => _p.getInt('progress_$levelId') ?? 0;
 
-  /// Guardar insignias ganadas
   static Future<bool> saveEarnedBadges(List<String> badges) async {
-    return await _prefs.setStringList(_badgesKey, badges);
+    return await _p.setStringList(_badgesKey, badges);
   }
 
-  /// Cargar insignias ganadas
-  static List<String> loadEarnedBadges() {
-    try {
-      final badges = _prefs.getStringList(_badgesKey);
-      return badges ?? [];
-    } catch (e) {
-      // Manejar error de carga
-      return [];
-    }
-  }
+  static List<String> loadEarnedBadges() => _p.getStringList(_badgesKey) ?? [];
 
-  /// Agregar insignia
   static Future<List<String>> addBadge(String badgeId) async {
     final badges = loadEarnedBadges();
     if (!badges.contains(badgeId)) {
@@ -152,23 +127,16 @@ class LocalStorageService {
     return badges;
   }
 
-  /// Limpiar todos los datos (usar con precaución)
-  static Future<bool> clearAll() async {
-    return await _prefs.clear();
-  }
+  // --- UTILIDADES ---
 
-  /// Obtener estadísticas para padres
+  static Future<bool> clearAll() async => await _p.clear();
+
   static Map<String, dynamic> getStatsForParents() {
-    final profile = loadProfile();
-    final playTime = loadPlayTime();
-    final badges = loadEarnedBadges();
-    final lastSession = loadLastSession();
-
     return {
-      'profile': profile?.toJson(),
-      'totalPlayTimeMinutes': playTime,
-      'earnedBadges': badges,
-      'lastSession': lastSession?.toIso8601String(),
+      'profile': loadProfile()?.toJson(),
+      'totalPlayTimeMinutes': loadPlayTime(),
+      'earnedBadges': loadEarnedBadges(),
+      'lastSession': loadLastSession()?.toIso8601String(),
       'isNewDay': isNewDay(),
     };
   }

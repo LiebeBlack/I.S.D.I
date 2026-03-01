@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:vector_math/vector_math_64.dart' show Vector3;
 
 /// Adaptador de entrada para soportar mouse (Windows/Linux) y touch (Android)
 /// Proporciona comportamiento consistente entre plataformas
@@ -97,7 +98,7 @@ class _AdaptiveButtonState extends State<AdaptiveButton> {
                 : [],
           ),
           transform: _isPressed
-              ? (Matrix4.identity()..scaleByVector3(Vector3(0.98, 0.98, 1.0)))
+              ? (Matrix4.identity()..scaleByVector3(Vector3(0.98, 0.98, 1)))
               : Matrix4.identity(),
           child: widget.child,
         ),
