@@ -77,7 +77,7 @@ class _Level3ScreenState extends ConsumerState<Level3Screen> {
           _completeLevel();
         }
       });
-      ref.read(currentProfileProvider.notifier).addProgress('level_3', 50);
+      (ref.read(currentProfileProvider.notifier) as ProfileNotifier).addProgress('level_3', 50);
     } else {
       _showDangerDialog(name);
     }
@@ -106,9 +106,10 @@ class _Level3ScreenState extends ConsumerState<Level3Screen> {
     _confettiController.play();
     final badge = IslaBadges.getById('detective_seguro');
     if (badge != null) {
-      ref.read(currentProfileProvider.notifier).addBadge(badge.id);
+      final notifier = ref.read(currentProfileProvider.notifier) as ProfileNotifier;
+      notifier.addBadge(badge.id);
+      notifier.unlockLevel(4);
     }
-    ref.read(currentProfileProvider.notifier).unlockLevel(4);
 
     showDialog(
       context: context,

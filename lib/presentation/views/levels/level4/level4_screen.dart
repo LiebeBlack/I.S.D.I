@@ -43,16 +43,17 @@ class _Level4ScreenState extends ConsumerState<Level4Screen> {
         _completeLevel();
       }
     });
-    ref.read(currentProfileProvider.notifier).addProgress('level_4', points);
+    (ref.read(currentProfileProvider.notifier) as ProfileNotifier).addProgress('level_4', points);
   }
 
   void _completeLevel() {
     _confettiController.play();
     final badge = IslaBadges.getById('calculador_frutas');
     if (badge != null) {
-      ref.read(currentProfileProvider.notifier).addBadge(badge.id);
+      final notifier = ref.read(currentProfileProvider.notifier) as ProfileNotifier;
+      notifier.addBadge(badge.id);
+      notifier.unlockLevel(5);
     }
-    ref.read(currentProfileProvider.notifier).unlockLevel(5);
 
     showDialog(
       context: context,

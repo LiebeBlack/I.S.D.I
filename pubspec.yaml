@@ -13,33 +13,33 @@ dependencies:
     sdk: flutter
   
   # Estado (Riverpod 2.6+ for 2026)
-  flutter_riverpod: ^2.6.0
+  flutter_riverpod: ^3.2.1
   
   # UI/UX & Animations
-  google_fonts: ^6.2.1
+  google_fonts: ^8.0.2
   flutter_svg: ^2.0.10+1
   lottie: ^3.1.2
-  flutter_animate: ^4.5.1
+  flutter_animate: ^4.5.2
   
   # Audio
   audioplayers: ^6.0.0
   
   # Almacenamiento local
-  shared_preferences: ^2.3.2
+  shared_preferences: ^2.3.5
   
   # Utilidades
   intl: ^0.20.2
-  confetti: ^0.7.0
+  confetti: ^0.8.0
   vector_math: ^2.1.4
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.1
+  flutter_lints: ^6.0.0
   
-  # Configuración multiplataforma
-  flutter_launcher_icons: ^0.13.1
-  flutter_native_splash: ^2.3.6
+  # Configuración multiplataforma (Enfocado en Android)
+  flutter_launcher_icons: ^0.14.3
+  flutter_native_splash: ^2.4.4
 
 flutter:
   uses-material-design: true
@@ -52,6 +52,7 @@ flutter:
     - assets/animations/
     - assets/animations/characters/
     - assets/animations/ui/
+    - assets/animations/success/
     - assets/icons/
 
   fonts:
@@ -96,21 +97,13 @@ flutter:
           weight: 900
           style: italic
 
-# Configuración de iconos para todas las plataformas
+# Configuración de iconos para Android
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: false
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
   adaptive_icon_background: "#0066CC"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
-  windows:
-    generate: true
-    image_path: "assets/icons/app_icon.png"
-    icon_size: 256
-  linux:
-    generate: true
-    image_path: "assets/icons/app_icon.png"
 
 # Configuración de pantalla de carga temática
 flutter_native_splash:
@@ -125,8 +118,5 @@ flutter_native_splash:
     branding: assets/icons/splash_branding.png
   
   android: true
-  ios: false
-  web: false
-  
   android_gravity: center
   fullscreen: true

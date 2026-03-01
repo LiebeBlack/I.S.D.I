@@ -76,15 +76,16 @@ class _Level2ScreenState extends ConsumerState<Level2Screen> {
     });
 
     // Guardar progreso en el estado global
-    ref.read(currentProfileProvider.notifier).addProgress('level_2', points);
+    (ref.read(currentProfileProvider.notifier) as ProfileNotifier).addProgress('level_2', points);
   }
 
   void _completeLevel() {
     _confettiController.play();
     
     // FIX: Uso correcto del sistema de insignias definido en el Paso 4
-    ref.read(currentProfileProvider.notifier).addBadge('comunicador_seguro');
-    ref.read(currentProfileProvider.notifier).unlockLevel(3);
+    final notifier = ref.read(currentProfileProvider.notifier) as ProfileNotifier;
+    notifier.addBadge('comunicador_seguro');
+    notifier.unlockLevel(3);
 
     showDialog(
       context: context,

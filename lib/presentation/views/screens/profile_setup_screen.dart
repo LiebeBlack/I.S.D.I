@@ -49,27 +49,41 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     final name = _nameController.text.trim();
     if (name.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('¡QUEREMOS SABER TU NOMBRE!'), backgroundColor: IslaColors.coralReef),
+        const SnackBar(
+          content: Text('¡QUEREMOS SABER TU NOMBRE!'), 
+          backgroundColor: IslaColors.coralReef
+        ),
       );
       return;
     }
 
     setState(() => _isSaving = true);
     try {
+      // CORRECCIÓN: Llamada segura al notifier sin casteo dinámico innecesario
+      // Se asume que currentProfileProvider.notifier es el ProfileNotifier
       await ref.read(currentProfileProvider.notifier).createProfile(
             name,
             _selectedAge,
             avatar: _selectedAvatar.toString(),
           );
-      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+          
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     } catch (e) {
-      if (mounted) setState(() => _isSaving = false);
+      if (mounted) {
+        setState(() => _isSaving = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error al crear perfil. Intenta de nuevo.')),
+        );
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // Evita que el teclado rompa el diseño
       resizeToAvoidBottomInset: true,
       body: IslandBackground(
         child: SafeArea(
@@ -133,7 +147,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
     return GlassContainer(
       child: Column(
         children: [
-          const Text('ELIGE TU AVATAR', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)),
+          const Text(
+            'ELIGE TU AVATAR', 
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)
+          ),
           const SizedBox(height: 16),
           Wrap(
             spacing: 16,
@@ -148,7 +165,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    border: Border.all(color: isSelected ? _avatarColors[index] : Colors.white.withValues(alpha: 0.5), width: 3),
+                    border: Border.all(
+                      color: isSelected ? _avatarColors[index] : Colors.white.withValues(alpha: 0.5), 
+                      width: 3
+                    ),
                   ),
                   child: Container(
                     width: 60,
@@ -156,7 +176,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                     decoration: BoxDecoration(
                       color: _avatarColors[index],
                       shape: BoxShape.circle,
-                      boxShadow: isSelected ? [BoxShadow(color: _avatarColors[index].withValues(alpha: 0.4), blurRadius: 10)] : [],
+                      boxShadow: isSelected 
+                        ? [BoxShadow(color: _avatarColors[index].withValues(alpha: 0.4), blurRadius: 10)] 
+                        : [],
                     ),
                     child: Icon(_avatars[index], color: Colors.white, size: 32),
                   ),
@@ -174,7 +196,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('¿CÓMO TE LLAMAS?', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)),
+          const Text(
+            '¿CÓMO TE LLAMAS?', 
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)
+          ),
           const SizedBox(height: 12),
           TextField(
             controller: _nameController,
@@ -187,11 +212,17 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
               prefixIcon: const Icon(Icons.star_rounded, color: IslaColors.sunflower),
               filled: true,
               fillColor: Colors.white.withValues(alpha: 0.5),
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20), borderSide: BorderSide.none),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20), 
+                borderSide: BorderSide.none
+              ),
             ),
           ),
           const SizedBox(height: 24),
-          const Text('¿CUÁNTOS AÑOS TIENES?', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)),
+          const Text(
+            '¿CUÁNTOS AÑOS TIENES?', 
+            style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: IslaColors.oceanDark)
+          ),
           const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -206,7 +237,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   decoration: BoxDecoration(
                     color: isSelected ? IslaColors.oceanBlue : Colors.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.1), width: 2),
+                    border: Border.all(
+                      color: isSelected ? Colors.white : Colors.white.withValues(alpha: 0.1), 
+                      width: 2
+                    ),
                   ),
                   child: Center(
                     child: Text(

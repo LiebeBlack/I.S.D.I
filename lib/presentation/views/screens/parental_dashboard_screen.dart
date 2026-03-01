@@ -65,8 +65,9 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
 
   @override
   Widget build(BuildContext context) {
-    final profile = ref.watch(currentProfileProvider);
-    final settings = ref.watch(parentalSettingsProvider);
+    // TIPADO CORREGIDO: Especificamos los modelos para evitar Dynamic calls
+    final ChildProfile? profile = ref.watch(currentProfileProvider);
+    final ParentalSettings settings = ref.watch(parentalSettingsProvider);
     
     return Scaffold(
       resizeToAvoidBottomInset: true, 
@@ -90,12 +91,13 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
         padding: const EdgeInsets.all(32),
         child: GlassContainer(
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.lock_person_rounded, size: 64, color: IslaColors.oceanBlue),
               const SizedBox(height: 16),
               const Text(
                 'SOLO ADULTOS', 
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20),
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20, color: IslaColors.oceanDark),
               ),
               const SizedBox(height: 8),
               const Text('Resuelve para configurar la isla:', textAlign: TextAlign.center),
@@ -141,8 +143,8 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
             ],
           ),
         ),
-      ).animate().fadeIn().scale(curve: Curves.easeOutBack),
-    );
+      ),
+    ).animate().fadeIn().scale(curve: Curves.easeOutBack);
   }
 
   // --- MÓDULO DASHBOARD ---
@@ -210,6 +212,7 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
 
   Widget _buildTimeSlider(ParentalSettings settings) {
     return GlassContainer(
+      padding: const EdgeInsets.all(16),
       child: Column(
         children: [
           Row(
@@ -226,6 +229,7 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
             value: settings.dailyTimeLimitMinutes.toDouble(),
             min: 15, max: 120, divisions: 7,
             activeColor: IslaColors.oceanBlue,
+            // CORRECCIÓN: Al usar ref.read(...) ahora el compilador sabe qué métodos existen
             onChanged: (val) => ref.read(parentalSettingsProvider.notifier).updateTimeLimit(val.toInt()),
           ),
         ],
@@ -234,22 +238,23 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
   }
 
   Widget _buildSoundControls(ParentalSettings settings) {
+    final notifier = ref.read(parentalSettingsProvider.notifier);
     return GlassContainer(
       padding: EdgeInsets.zero,
       child: Column(
         children: [
           SwitchListTile(
             title: const Text('Efectos Especiales'),
-            secondary: const Icon(Icons.volume_up_rounded),
+            secondary: const Icon(Icons.volume_up_rounded, color: IslaColors.oceanBlue),
             value: settings.soundEnabled,
-            onChanged: (_) => ref.read(parentalSettingsProvider.notifier).toggleSound(),
+            onChanged: (val) => notifier.toggleSound(),
           ),
           const Divider(height: 1),
           SwitchListTile(
             title: const Text('Música de Fondo'),
-            secondary: const Icon(Icons.music_note_rounded),
+            secondary: const Icon(Icons.music_note_rounded, color: IslaColors.oceanBlue),
             value: settings.musicEnabled,
-            onChanged: (_) => ref.read(parentalSettingsProvider.notifier).toggleMusic(),
+            onChanged: (val) => notifier.toggleMusic(),
           ),
         ],
       ),
@@ -268,9 +273,7 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
 
   Widget _buildDangerZone() {
     return OutlinedButton.icon(
-      onPressed: () {
-        // Lógica para resetear progreso
-      },
+      onPressed: _showResetConfirmation,
       icon: const Icon(Icons.delete_sweep_rounded),
       label: const Text('BORRAR PROGRESO DEL PERFIL'),
       style: OutlinedButton.styleFrom(
@@ -278,6 +281,28 @@ class _ParentalDashboardScreenState extends ConsumerState<ParentalDashboardScree
         side: const BorderSide(color: Colors.redAccent),
         padding: const EdgeInsets.symmetric(vertical: 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      ),
+    );
+  }
+
+  void _showResetConfirmation() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('¿Estás seguro?'),
+        content: const Text('Se perderán todos los niveles completados y logros obtenidos.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('CANCELAR')),
+          TextButton(
+            onPressed: () {
+              // CORRECCIÓN: Llamada tipada al Reset del perfil
+              ref.read(currentProfileProvider.notifier).resetProgress();
+              Navigator.pop(context); // Cierra Dialog
+              Navigator.pop(context); // Sale del dashboard
+            }, 
+            child: const Text('BORRAR TODO', style: TextStyle(color: Colors.redAccent))
+          ),
+        ],
       ),
     );
   }

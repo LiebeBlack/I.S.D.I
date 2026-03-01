@@ -73,9 +73,9 @@ class _Level1ScreenState extends ConsumerState<Level1Screen> {
   /// FIX: Lógica para desbloquear el siguiente nivel y mostrar celebración
   void _finishLevel() {
     // Desbloqueamos el Nivel 2 en el perfil del usuario
-    ref.read(currentProfileProvider.notifier).unlockLevel(2);
-    // Añadimos una insignia por completar el primer nivel
-    ref.read(currentProfileProvider.notifier).addBadge('explorer_level_1');
+    final notifier = ref.read(currentProfileProvider.notifier) as ProfileNotifier;
+    notifier.unlockLevel(2);
+    notifier.addBadge('explorer_level_1');
     
     _showFinalCelebration();
   }
