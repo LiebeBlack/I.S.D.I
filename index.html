@@ -10,8 +10,8 @@
             --primary: #8a2be2;
             --accent: #c084fc;
             --bg-dark: #05010d;
-            --bg-card: rgba(15, 5, 30, 0.78);
-            --glass-border: rgba(255, 255, 255, 0.13);
+            --bg-card: rgba(15, 5, 30, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.09);
             --text-main: #ffffff;
             --text-dim: #a0a0c0;
         }
@@ -23,420 +23,260 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
-            line-height: 1.7;
+            line-height: 1.85;
             text-align: center;
         }
 
-        /* FONDO DINÁMICO MORADO OSCURO (exactamente el que te encanta) */
+        /* FONDO DINÁMICO ULTRA FLUIDO AL DESPLAZARSE */
         .glow-mesh {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             background: 
-                radial-gradient(circle at 20% 30%, rgba(138, 43, 226, 0.18) 0%, transparent 45%),
-                radial-gradient(circle at 80% 70%, rgba(192, 132, 252, 0.13) 0%, transparent 45%),
-                radial-gradient(circle at 50% 10%, rgba(138, 43, 226, 0.08) 0%, transparent 60%);
-            animation: meshPulse 25s ease infinite alternate;
+                radial-gradient(circle at 22% 28%, rgba(138, 43, 226, 0.21) 0%, transparent 50%),
+                radial-gradient(circle at 78% 72%, rgba(192, 132, 252, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 48% 12%, rgba(138, 43, 226, 0.09) 0%, transparent 58%);
+            animation: meshPulse 32s ease infinite alternate;
+            will-change: transform;
         }
 
         @keyframes meshPulse {
-            0%   { opacity: 0.88; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.035); }
+            0%   { opacity: 0.94; transform: scale(1) rotate(0deg); }
+            100% { opacity: 1; transform: scale(1.055) rotate(1.2deg); }
         }
 
-        /* NAVEGACIÓN ELEGANTE Y RESPONSIVE */
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 22px 5%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(5, 1, 13, 0.85);
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--glass-border);
-            max-width: 100%;
-            margin: 0 auto;
+        /* ANIMACIONES PREMIUM ULTRA SUAVES */
+        .reveal {
+            opacity: 0;
+            transform: translateY(70px) scale(0.95);
+            transition: all 1.25s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
         }
 
-        .nav-logo {
-            font-weight: 800;
-            font-size: 1.45rem;
-            color: var(--accent);
-            letter-spacing: -1px;
+        .bento-card {
+            transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .bento-card:hover {
+            transform: translateY(-16px);
+            box-shadow: 0 35px 80px rgba(138, 43, 226, 0.22);
+            border-color: var(--accent);
         }
 
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--text-dim);
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .version-tag {
-            background: rgba(192, 132, 252, 0.18);
-            color: var(--accent);
-            padding: 7px 20px;
-            border-radius: 50px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            border: 1px solid rgba(192, 132, 252, 0.35);
-            white-space: nowrap;
-        }
-
-        /* HEADER - TODO CENTRADO */
-        header {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-            background: radial-gradient(circle at bottom, rgba(138, 43, 226, 0.13), transparent 75%);
-            position: relative;
-            text-align: center;
-        }
-
-        .badge {
-            background: rgba(138, 43, 226, 0.22);
-            padding: 10px 28px;
-            border-radius: 50px;
-            font-size: 0.82rem;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            border: 1px solid var(--primary);
-            margin-bottom: 24px;
-            color: var(--accent);
-            animation: badgeFloat 4s ease infinite;
-        }
-
-        @keyframes badgeFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
-        h1 {
-            font-size: clamp(3.8rem, 12vw, 8.8rem);
-            font-weight: 800;
-            letter-spacing: -4px;
-            background: linear-gradient(180deg, #fff, #b0a0ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 18px;
-            line-height: 1;
-            text-align: center;
-        }
-
-        .hero-subtitle {
-            font-size: clamp(1.05rem, 4vw, 1.5rem);
-            color: var(--text-dim);
-            max-width: 760px;
-            font-weight: 300;
-            margin: 0 auto 45px;
-            text-align: center;
-        }
-
-        /* SECCIONES - TODO CENTRADO */
+        /* SECCIONES COMPACTAS Y ELEGANTES */
         .section-container {
-            max-width: 1280px;
+            max-width: 1160px;
             margin: 0 auto;
             padding: 0 20px;
         }
 
         .section-title {
-            margin-bottom: 70px;
-            text-align: center;
+            margin-bottom: 58px;
         }
         .section-title h2 {
-            font-size: clamp(2.4rem, 7vw, 3.6rem);
+            font-size: clamp(2.15rem, 6.2vw, 3.25rem);
             background: linear-gradient(90deg, var(--text-main), var(--primary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-align: center;
+            font-weight: 700;
+            letter-spacing: -1.1px;
         }
 
-        /* GRID BENTO - TOTALMENTE RESPONSIVE */
         .grid-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-            gap: 32px;
+            grid-template-columns: repeat(auto-fit, minmax(305px, 1fr));
+            gap: 28px;
+            max-width: 1160px;
+            margin: 0 auto;
         }
 
         .bento-card {
             background: var(--bg-card);
             border: 1px solid var(--glass-border);
-            border-radius: 32px;
-            padding: 48px 32px;
-            backdrop-filter: blur(14px);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
+            border-radius: 28px;
+            padding: 46px 34px;
+            backdrop-filter: blur(18px);
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            min-height: 320px;
-        }
-
-        .bento-card:hover {
-            border-color: var(--accent);
-            box-shadow: 0 25px 60px rgba(138, 43, 226, 0.25);
-            transform: translateY(-12px) scale(1.03);
+            min-height: 285px;
         }
 
         .bento-card h3 {
-            font-size: 1.55rem;
-            margin-bottom: 18px;
-            transition: all 0.4s;
-            text-align: center;
+            font-size: 1.48rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.5s ease;
+            position: relative;
         }
 
-        .icon-box {
-            font-size: 3.2rem;
-            margin: 18px 0 22px;
-            filter: drop-shadow(0 0 12px var(--primary));
+        .bento-card h3::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            width: 0;
+            height: 1px;
+            background: var(--accent);
+            transition: all 0.5s ease;
+            transform: translateX(-50%);
         }
 
-        /* EXPANSIÓN TARJETAS */
+        .bento-card:hover h3::after {
+            width: 48px;
+        }
+
+        /* EXPANSIÓN MÁS ELEGANTE Y PROFUNDA */
         .card-content {
             display: grid;
             grid-template-rows: 0fr;
-            transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: grid-template-rows 0.75s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
         }
         .card-inner {
             overflow: hidden;
             opacity: 0;
-            transform: translateY(-15px);
-            transition: all 0.5s ease;
+            transform: translateY(-18px);
+            transition: all 0.65s cubic-bezier(0.23, 1, 0.32, 1);
             text-align: center;
+            font-size: 0.975rem;
+            color: var(--text-dim);
+            line-height: 1.85;
         }
         .bento-card.expanded .card-content { grid-template-rows: 1fr; }
         .bento-card.expanded .card-inner {
             opacity: 1;
             transform: translateY(0);
-            padding-top: 16px;
         }
         .bento-card.expanded h3 {
             color: var(--accent);
-            transform: scale(1.06);
         }
 
-        /* STATS BAR - CENTRADA Y RESPONSIVE */
+        /* STATS REFINADOS */
         .stats-bar {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 50px;
-            padding: 80px 20px;
-            background: rgba(255,255,255,0.015);
-            margin: 60px 0;
+            gap: 46px;
+            padding: 72px 20px;
+            background: rgba(255,255,255,0.008);
+            margin: 52px 0;
             border-top: 1px solid var(--glass-border);
             border-bottom: 1px solid var(--glass-border);
         }
         .stat-item h4 {
-            font-size: clamp(2rem, 5.5vw, 2.9rem);
+            font-size: clamp(2rem, 5.4vw, 2.75rem);
             color: var(--primary);
             font-weight: 800;
         }
-        .stat-item p {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-dim);
-        }
-
-        /* ARQUITECTURA Y FILOSOFÍA */
-        .architecture {
-            background: rgba(10, 3, 25, 0.6);
-            padding: 120px 20px;
-        }
-
-        .release-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 28px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .release-card {
-            background: var(--bg-card);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 32px;
-            text-align: center;
-        }
 
         .cta-main {
-            padding: 18px 52px;
+            padding: 17px 48px;
             background: linear-gradient(90deg, var(--primary), var(--accent));
             color: white;
             text-decoration: none;
             border-radius: 100px;
-            font-weight: 800;
+            font-weight: 700;
             display: inline-block;
-            transition: all 0.4s;
-            box-shadow: 0 0 40px rgba(138, 43, 226, 0.5);
-            letter-spacing: 1.5px;
+            transition: all 0.45s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 0 38px rgba(138, 43, 226, 0.4);
+            font-size: 1.05rem;
         }
         .cta-main:hover {
-            transform: scale(1.08);
+            transform: scale(1.065);
             box-shadow: 0 0 70px var(--accent);
         }
 
         footer {
-            padding: 110px 20px 60px;
+            padding: 98px 20px 62px;
             background: linear-gradient(to top, #000000, transparent);
-            text-align: center;
+            font-size: 0.94rem;
+            opacity: 0.78;
         }
 
-        /* MEDIA QUERIES - MÁXIMA ADAPTABILIDAD */
-        @media (max-width: 1024px) {
-            .grid-container { gap: 24px; }
-            .bento-card { padding: 40px 24px; min-height: 280px; }
-        }
-
+        /* RESPONSIVE ULTRA COMPACTO Y ELEGANTE */
         @media (max-width: 768px) {
-            nav {
-                flex-direction: column;
-                padding: 18px 5%;
-                gap: 16px;
-            }
-            .nav-links {
-                gap: 20px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            .version-tag {
-                font-size: 0.78rem;
-                padding: 6px 16px;
-            }
-            header { min-height: 85vh; padding-top: 100px; }
-            .grid-container {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-            .bento-card {
-                padding: 36px 24px;
-                min-height: auto;
-            }
-            .stats-bar {
-                gap: 30px;
-                padding: 60px 20px;
-            }
-            .section-title { margin-bottom: 50px; }
+            .grid-container { gap: 22px; grid-template-columns: 1fr; }
+            .bento-card { padding: 38px 26px; min-height: auto; }
+            .stats-bar { gap: 32px; padding: 58px 20px; }
         }
 
         @media (max-width: 480px) {
-            .nav-links a { font-size: 0.95rem; }
-            h1 { font-size: clamp(3.2rem, 11vw, 6.5rem); }
+            h1 { font-size: clamp(3.1rem, 10.8vw, 6.2rem); }
+            .bento-card { padding: 34px 22px; }
         }
     </style>
 </head>
 <body>
 
-    <div class="glow-mesh"></div>
+    <div class="glow-mesh" id="glowMesh"></div>
 
-    <!-- NAVEGACIÓN FIJA - SIN SUPERPOSICIÓN -->
-    <nav>
-        <div class="nav-logo">I.S.D.I</div>
-        
-        <div class="nav-links">
-            <a href="#vision">Visión</a>
-            <a href="#pilares">Pilares</a>
-            <a href="#arquitectura">Arquitectura</a>
-            <a href="#filosofia">Filosofía</a>
-        </div>
-        
-        <div class="version-tag">V0.7.3 • Latest Release</div>
-    </nav>
-
-    <header>
-        <span class="badge">Innovation in Education • GPL-3.0</span>
-        <h1>I.S.D.I</h1>
-        <p class="hero-subtitle">
+    <header style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px 20px; background: radial-gradient(circle at bottom, rgba(138, 43, 226, 0.11), transparent 78%); text-align: center;">
+        <span style="background: rgba(138, 43, 226, 0.22); padding: 10px 26px; border-radius: 50px; font-size: 0.8rem; letter-spacing: 3.5px; text-transform: uppercase; border: 1px solid var(--primary); margin-bottom: 22px; color: var(--accent); animation: badgeFloat 4.8s ease infinite;">
+            Proyecto Universitario • GPL-3.0
+        </span>
+        <h1 style="font-size: clamp(3.7rem, 11.8vw, 8.5rem); font-weight: 800; letter-spacing: -3.8px; background: linear-gradient(180deg, #fff, #b0a0ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 16px; line-height: 1;">
+            I.S.D.I
+        </h1>
+        <p style="font-size: clamp(1.06rem, 3.9vw, 1.42rem); color: var(--text-dim); max-width: 730px; font-weight: 300; margin: 0 auto 44px;">
             Transformando el tiempo de pantalla en aprendizaje constructivo.<br>
-            Una arquitectura digital diseñada para la próxima generación de mentes brillantes.<br>
-            <strong>No es un juego. Es un ecosistema pedagógico completo.</strong>
+            Un ecosistema pedagógico basado en el modelo CPA y la identidad cultural de la Isla de Margarita.
         </p>
-        <div>
-            <a href="#vision" class="cta-main">INICIAR EXPLORACIÓN EN LA ISLA</a>
-        </div>
+        <a href="#vision" class="cta-main">EXPLORAR LA ISLA DIGITAL</a>
     </header>
 
-    <!-- STATS BAR -->
+    <!-- STATS -->
     <section class="stats-bar">
-        <div class="stat-item"><h4>92.2%</h4><p>Código en Dart</p></div>
-        <div class="stat-item"><h4>CPA</h4><p>Modelo Bruner</p></div>
-        <div class="stat-item"><h4>4</h4><p>Releases Activas</p></div>
-        <div class="stat-item"><h4>Clean</h4><p>Architecture</p></div>
+        <div class="stat-item"><h4 class="stat-number" data-target="92.2">0</h4><p>% Dart</p></div>
+        <div class="stat-item"><h4 class="stat-number" data-target="4">0</h4><p>Releases</p></div>
+        <div class="stat-item"><h4 class="stat-number" data-target="100">0</h4><p>% Iconográfico</p></div>
+        <div class="stat-item"><h4 class="stat-number" data-target="1">0</h4><p>Contributor Elite</p></div>
     </section>
 
     <!-- VISIÓN -->
-    <div class="diagonal-bg" style="padding: 120px 0;">
+    <div style="padding: 98px 0; background: linear-gradient(168deg, var(--bg-dark) 40%, #0b041b 42%, var(--bg-dark) 44%);">
         <section id="vision" class="section-container">
-            <div class="section-title">
+            <div class="section-title reveal">
                 <h2>Nuestra Visión</h2>
-                <p style="color: var(--text-dim); max-width: 820px; margin: 20px auto 0; font-size: 1.15rem;">
-                    Isla Digital no es solo una aplicación; es un ecosistema pedagógico completo.<br>
-                    Basado en el modelo CPA y gamificación educativa, traducimos conceptos tecnológicos en metáforas visuales intuitivas.
-                </p>
             </div>
-
             <div class="grid-container">
-                <div class="bento-card interactive-card">
+
+                <div class="bento-card reveal interactive-card">
                     <h3>Aprendizaje Cognitivo</h3>
                     <div class="card-content">
                         <div class="card-inner">
-                            <span class="icon-box">🧩</span>
-                            <p>Modelo Bruner (CPA) garantiza comprensión real antes del código. Aprendizaje sólido y duradero.</p>
+                            El modelo Bruner (Concreto-Pictórico-Abstracto) es el fundamento de toda la plataforma. El niño primero experimenta de forma tangible, luego visualiza el concepto y finalmente lo representa en código. Esta progresión asegura una comprensión profunda, estructurada y duradera, eliminando la frustración típica de la enseñanza tradicional de programación.
                         </div>
                     </div>
                 </div>
-                <div class="bento-card interactive-card" style="background: linear-gradient(45deg, var(--bg-card), rgba(138, 43, 226, 0.12));">
+
+                <div class="bento-card reveal interactive-card" style="background: linear-gradient(45deg, var(--bg-card), rgba(138, 43, 226, 0.12));">
                     <h3>Gamificación Real</h3>
                     <div class="card-content">
                         <div class="card-inner">
-                            <span class="icon-box">🚀</span>
-                            <p>Cada logro desbloquea verdadera Ciudadanía Digital. Nada de puntos vacíos.</p>
+                            Cada avance desbloquea habilidades concretas de Ciudadanía Digital: gestión segura de información, protocolos de emergencia y navegación responsable. No se trata de puntos decorativos, sino de competencias reales que preparan al niño para un mundo digital seguro y ético.
                         </div>
                     </div>
                 </div>
-                <div class="bento-card interactive-card">
-                    <h3>Entorno Sandbox</h3>
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Entorno Sandbox Seguro</h3>
                     <div class="card-content">
                         <div class="card-inner">
-                            <span class="icon-box">🛡️</span>
-                            <p>Laboratorio seguro donde el error es el mejor maestro. Exploración pura.</p>
+                            Un laboratorio completamente aislado donde el error forma parte del proceso de aprendizaje. El niño puede experimentar libremente sin riesgos externos ni exposición a internet, convirtiendo cada intento fallido en una oportunidad de crecimiento.
                         </div>
                     </div>
                 </div>
-                <div class="bento-card interactive-card">
-                    <h3>Analítica Parental</h3>
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Analítica Parental Avanzada</h3>
                     <div class="card-content">
                         <div class="card-inner">
-                            <span class="icon-box">📈</span>
-                            <p>Reportes IA que descubren talentos tempranos. Control total y tranquilidad.</p>
+                            Reportes generados por inteligencia artificial que identifican fortalezas tempranas en lógica, creatividad y resolución de problemas. Los padres obtienen control total sobre el tiempo de uso y recomendaciones educativas personalizadas para cada etapa del desarrollo.
                         </div>
                     </div>
                 </div>
@@ -445,117 +285,163 @@
     </div>
 
     <!-- PILARES -->
-    <section id="pilares" class="section-container" style="padding: 120px 20px;">
-        <div class="section-title">
+    <section id="pilares" class="section-container" style="padding: 98px 20px;">
+        <div class="section-title reveal">
             <h2>Pilares del Proyecto</h2>
         </div>
         <div class="grid-container">
-            <div class="bento-card interactive-card">
-                <span class="icon-box">🎮</span>
-                <h3>Interfaz Adaptativa</h3>
+
+            <div class="bento-card reveal interactive-card">
+                <h3>Interfaz 100% Iconográfica</h3>
                 <div class="card-content">
                     <div class="card-inner">
-                        <p>Para pre-lectores. Hitboxes grandes y navegación 100% iconográfica.</p>
+                        Diseñada específicamente para pre-lectores con elementos visuales grandes y navegación intuitiva. Cualquier niño puede explorar y aprender sin necesidad de leer texto, haciendo la plataforma verdaderamente inclusiva desde los primeros años.
                     </div>
                 </div>
             </div>
-            <div class="bento-card interactive-card">
-                <span class="icon-box">🛡️</span>
-                <h3>Ciudadanía Digital</h3>
+
+            <div class="bento-card reveal interactive-card">
+                <h3>Identidad Cultural Margariteña</h3>
                 <div class="card-content">
                     <div class="card-inner">
-                        <p>Simulación de chat seguro, protocolos de emergencia y navegación responsable.</p>
+                        La estética y las metáforas están inspiradas en los colores del Caribe, los ritmos locales y la identidad de la Isla de Margarita. La tecnología deja de ser algo distante para convertirse en una extensión natural de nuestra cultura y orgullo regional.
                     </div>
                 </div>
             </div>
-            <div class="bento-card interactive-card">
-                <span class="icon-box">🐚</span>
-                <h3>Identidad Local</h3>
+
+            <div class="bento-card reveal interactive-card">
+                <h3>Ciudadanía Digital Responsable</h3>
                 <div class="card-content">
                     <div class="card-inner">
-                        <p>Inspirada en la Isla de Margarita. Tecnología que se siente nuestra.</p>
+                        Módulos integrados de simulación real que enseñan desde los 5 años cómo proteger datos, reconocer riesgos en línea y actuar con responsabilidad. Formamos ciudadanos digitales conscientes y preparados para el futuro.
                     </div>
                 </div>
             </div>
-            <div class="bento-card interactive-card">
-                <span class="icon-box">📊</span>
-                <h3>Dashboard Parental</h3>
+
+            <div class="bento-card reveal interactive-card">
+                <h3>Dashboard Parental Inteligente</h3>
                 <div class="card-content">
                     <div class="card-inner">
-                        <p>Tiempo de uso, reportes IA y control total desde tu teléfono.</p>
+                        Control completo desde cualquier dispositivo: límites de tiempo, reportes detallados de progreso, gestión de contenidos y sugerencias educativas adaptadas al desarrollo individual de cada niño.
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- ARQUITECTURA -->
-    <section id="arquitectura" class="architecture section-container">
-        <div class="section-title">
-            <h2>Arquitectura del Sistema</h2>
-        </div>
-        <p style="max-width: 860px; margin: 0 auto 60px; color: var(--text-dim); font-size: 1.15rem;">
-            Clean Architecture completa • 92.2% Dart • Código modular, testeable y preparado para crecer.
-        </p>
-        
-        <div class="release-grid">
-            <div class="release-card">
-                <h4 style="color:var(--accent);">V0.7.3</h4>
-                <p style="color:var(--text-dim); margin-top:10px;">Latest • Mejoras en Modularidad y Rendimiento</p>
+    <!-- ARQUITECTURA Y REPOSITORIO -->
+    <section style="padding: 98px 0; background: rgba(10, 3, 25, 0.58);">
+        <section id="repositorio" class="section-container">
+            <div class="section-title reveal">
+                <h2>Sobre el Repositorio y la Arquitectura</h2>
             </div>
-            <div class="release-card">
-                <h4 style="color:var(--accent);">V0.7.2</h4>
-                <p style="color:var(--text-dim); margin-top:10px;">Optimización completa de Lógica y UI</p>
+            <div class="grid-container">
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Clean Architecture</h3>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            Implementación profesional con separación estricta de capas. Esto facilita el testing exhaustivo, el mantenimiento a largo plazo y la escalabilidad futura del proyecto. Un código limpio, modular y preparado para crecer con la comunidad educativa.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Desarrollado en Dart y Flutter</h3>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            92,2% del código está escrito en Dart, permitiendo rendimiento nativo en Android e iOS. Optimizado para dispositivos de gama media y baja, ideal para su uso en escuelas públicas y familias venezolanas.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Estado Actual del Proyecto</h3>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            Versión estable V0.7.3 con cuatro releases públicas. Código completamente abierto bajo licencia GPL-3.0. Últimas mejoras enfocadas en modularidad, rendimiento y experiencia de usuario en dispositivos móviles.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-card reveal interactive-card">
+                    <h3>Repositorio Abierto en GitHub</h3>
+                    <div class="card-content">
+                        <div class="card-inner">
+                            Todo el código fuente está disponible públicamente para que estudiantes, docentes y desarrolladores puedan revisar, contribuir y adaptar la plataforma. Un proyecto universitario con vocación de impacto real en la educación venezolana.
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="release-card">
-                <h4 style="color:var(--accent);">V0.7.1</h4>
-                <p style="color:var(--text-dim); margin-top:10px;">Refactor de estilos y experiencia móvil</p>
-            </div>
-            <div class="release-card">
-                <h4 style="color:var(--accent);">V0.7.0</h4>
-                <p style="color:var(--text-dim); margin-top:10px;">Lanzamiento base con Clean Architecture</p>
-            </div>
-        </div>
+        </section>
     </section>
 
     <!-- FILOSOFÍA -->
-    <section id="filosofia" class="section-container" style="padding: 130px 20px; background: rgba(10,3,25,0.45);">
-        <div class="bento-card" style="max-width: 980px; margin: 0 auto; border-color: var(--primary); cursor: default; padding: 70px 50px;">
-            <h3 style="font-size: clamp(1.8rem, 5vw, 2.8rem); color: var(--accent);">Filosofía Margarita</h3>
-            <p style="color: var(--text-dim); font-size: 1.15rem; max-width: 780px; margin: 30px auto 0; line-height: 1.9;">
-                Tropicalizamos la educación tecnológica usando los colores, ritmos y símbolos de la Isla de Margarita.<br>
-                La tecnología deja de ser algo ajeno y se convierte en parte de nuestra propia identidad cultural.
+    <section id="filosofia" class="section-container" style="padding: 98px 20px;">
+        <div class="bento-card reveal" style="max-width: 940px; margin: 0 auto; border-color: var(--primary); cursor: default; padding: 68px 46px;">
+            <h3 style="font-size: clamp(1.78rem, 4.9vw, 2.62rem); color: var(--accent); margin-bottom: 32px;">Filosofía Margarita</h3>
+            <p style="font-size: 1.1rem; color: var(--text-dim); max-width: 780px; margin: 0 auto; line-height: 1.88;">
+                I.S.D.I nace con la misión de tropicalizar la educación tecnológica. Utilizamos los colores, ritmos y símbolos de nuestra Isla de Margarita para que los niños no perciban la programación como algo ajeno o importado, sino como una herramienta propia, cercana y llena de identidad cultural. La tecnología se convierte así en una extensión natural de quienes somos.
             </p>
         </div>
     </section>
 
     <!-- CTA FINAL -->
-    <section class="section-container" style="padding: 110px 20px; text-align: center;">
-        <a href="https://github.com/LiebeBlack/I.S.D.I" target="_blank" class="cta-main" style="font-size: 1.25rem;">
-            EXPLORAR REPOSITORIO EN GITHUB →
+    <section class="section-container" style="padding: 88px 20px; text-align: center;">
+        <a href="https://github.com/LiebeBlack/I.S.D.I" target="_blank" class="cta-main">
+            EXPLORAR EL REPOSITORIO EN GITHUB
         </a>
-        <p style="margin-top: 40px; color: var(--text-dim); font-size: 1rem;">Proyecto Universitario • Licencia GPL-3.0 • LiebeBlack © 2026</p>
+        <p style="margin-top: 42px; color: var(--text-dim); font-size: 0.96rem;">LiebeBlack © 2026 • Proyecto Universitario • Licencia GPL-3.0</p>
     </section>
 
     <footer>
-        <p style="margin-bottom: 18px; opacity: 0.6;">Designed with excellence for the future of education.</p>
-        <p><strong>LiebeBlack</strong> • Isla Digital Elite Project</p>
+        <p>Designed with excellence for the future of education in Venezuela</p>
     </footer>
 
     <script>
-        // SCROLL REVEAL
+        // SCROLL REVEAL PREMIUM
         function reveal() {
-            document.querySelectorAll(".reveal, .bento-card, .release-card").forEach(el => {
+            document.querySelectorAll('.reveal').forEach(el => {
                 const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 120) {
-                    el.classList.add("active");
-                }
+                if (rect.top < window.innerHeight - 110) el.classList.add('active');
             });
         }
-        window.addEventListener("scroll", reveal);
+        window.addEventListener('scroll', reveal);
         reveal();
 
-        // EXPANSIÓN TARJETAS
+        // FONDO AÚN MÁS DINÁMICO AL DESPLAZARSE
+        const mesh = document.getElementById('glowMesh');
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const intensity = Math.min(1.09, 1 + scrollY * 0.000085);
+            mesh.style.transform = `translateY(${scrollY * 0.042}px) scale(${intensity})`;
+        });
+
+        // ANIMACIÓN DE NÚMEROS EN STATS
+        function animateNumbers() {
+            document.querySelectorAll('.stat-number').forEach(num => {
+                const target = parseFloat(num.getAttribute('data-target'));
+                let count = 0;
+                const increment = target / 72;
+                const timer = setInterval(() => {
+                    count += increment;
+                    if (count >= target) {
+                        count = target;
+                        clearInterval(timer);
+                    }
+                    num.textContent = Number.isInteger(target) ? Math.floor(count) : count.toFixed(1);
+                }, 32);
+            });
+        }
+        const statsObserver = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting) {
+                animateNumbers();
+                statsObserver.disconnect();
+            }
+        }, { threshold: 0.65 });
+        statsObserver.observe(document.querySelector('.stats-bar'));
+
+        // EXPANSIÓN DE TARJETAS
         document.querySelectorAll('.interactive-card').forEach(card => {
             card.addEventListener('click', () => {
                 card.classList.toggle('expanded');
