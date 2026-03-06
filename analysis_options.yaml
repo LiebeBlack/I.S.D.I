@@ -15,13 +15,15 @@ analyzer:
   errors:
     missing_required_param: error
     missing_return: error
-    invalid_assignment: warning
-    dead_code: info
-    unused_import: warning
-    unused_local_variable: warning
+    invalid_assignment: error
+    dead_code: error
+    unused_import: error
+    unused_local_variable: error
     prefer_const_constructors: warning
     prefer_const_literals_to_create_immutables: warning
-    avoid_print: warning
+    avoid_print: error
+    always_declare_return_types: error
+    avoid_dynamic_calls: error
 
 linter:
   rules:
@@ -38,7 +40,7 @@ linter:
     prefer_single_quotes: true
     prefer_final_locals: true
     prefer_final_in_for_each: true
-    prefer_expression_function_bodies: false
+    prefer_expression_function_bodies: true
     always_declare_return_types: true
     annotate_overrides: true
     avoid_dynamic_calls: true

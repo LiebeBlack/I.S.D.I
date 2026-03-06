@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class ColorUtils {
   /// Oscurece un color reduciendo su luminosidad.
   static Color darken(Color color, [double amount = 0.1]) {
+    assert(amount >= 0 && amount <= 1.0, 'Amount must be between 0.0 and 1.0');
     final hsl = HSLColor.fromColor(color);
     return hsl
         .withLightness((hsl.lightness - amount).clamp(0.0, 1.0))
@@ -13,6 +14,7 @@ class ColorUtils {
 
   /// Aclara un color aumentando su luminosidad.
   static Color lighten(Color color, [double amount = 0.1]) {
+    assert(amount >= 0 && amount <= 1.0, 'Amount must be between 0.0 and 1.0');
     final hsl = HSLColor.fromColor(color);
     return hsl
         .withLightness((hsl.lightness + amount).clamp(0.0, 1.0))

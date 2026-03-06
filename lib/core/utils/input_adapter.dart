@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:vector_math/vector_math_64.dart' show Vector3;
@@ -5,16 +7,18 @@ import 'package:vector_math/vector_math_64.dart' show Vector3;
 /// Adaptador de entrada para soportar mouse (Windows/Linux) y touch (Android)
 /// Proporciona comportamiento consistente entre plataformas
 class InputAdapter {
-  /// Detectar si estamos en una plataforma de escritorio
+  /// Detectar si estamos en una plataforma de escritorio de forma segura
   static bool get isDesktop {
-    return const bool.fromEnvironment('dart.vm.product') == false
-        ? false
-        : true;
+    if (kIsWeb) return false;
+    try {
+      return Platform.isWindows || Platform.isLinux || Platform.isMacOS;
+    } catch (_) {
+      return false; // Fallback seguro (Zero-Errors)
+    }
   }
 
   /// Configuración de scroll para mouse (con rueda) y touch
-  static ScrollBehavior getScrollBehavior() {
-    return const MaterialScrollBehavior().copyWith(
+  static ScrollBehavior getScrollBehavior() => const MaterialScrollBehavior().copyWith(
       // Soportar drag con mouse en desktop
       dragDevices: {
         PointerDeviceKind.touch,
@@ -23,15 +27,13 @@ class InputAdapter {
         PointerDeviceKind.stylus,
       },
     );
-  }
 
   /// Hover effect para elementos interactivos
   static Widget wrapWithHover({
     required Widget child,
     required VoidCallback onTap,
     Color hoverColor = Colors.transparent,
-  }) {
-    return MouseRegion(
+  }) => MouseRegion(
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
         onTap: onTap,
@@ -41,7 +43,6 @@ class InputAdapter {
         ),
       ),
     );
-  }
 }
 
 /// Widget de botón adaptable que funciona bien con mouse y touch
@@ -69,8 +70,7 @@ class _AdaptiveButtonState extends State<AdaptiveButton> {
   bool _isPressed = false;
 
   @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
+  Widget build(BuildContext context) => MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
@@ -104,7 +104,6 @@ class _AdaptiveButtonState extends State<AdaptiveButton> {
         ),
       ),
     );
-  }
 }
 
 /// Widget de área de juego que soporta tanto touch como mouse
@@ -124,8 +123,7 @@ class AdaptiveGameArea extends StatelessWidget {
   final Function()? onPanEnd;
 
   @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
+  Widget build(BuildContext context) => GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTapUp: (details) => onTap(details.localPosition),
       onPanStart: onPanStart != null
@@ -137,16 +135,12 @@ class AdaptiveGameArea extends StatelessWidget {
       onPanEnd: onPanEnd != null ? (_) => onPanEnd!() : null,
       child: child,
     );
-  }
 }
 
 /// Optimizaciones de memoria para dispositivos de gama baja
 class MemoryOptimizations {
   /// Deshabilitar animaciones pesadas en dispositivos de bajos recursos
-  static bool get shouldReduceAnimations {
-    // En una app real, esto detectaría la memoria disponible
-    return false;
-  }
+  static bool get shouldReduceAnimations => false;
 
   /// Limitar el número de elementos en listas
   static int get maxListItems => 50;
@@ -160,8 +154,7 @@ class MemoryOptimizations {
 
 /// Extension para optimizar Image widgets
 extension OptimizedImage on Image {
-  static Widget optimizedNetwork(String url, {double? width, double? height}) {
-    return Image.network(
+  static Widget optimizedNetwork(String url, {double? width, double? height}) => Image.network(
       url,
       width: width,
       height: height,
@@ -180,13 +173,13 @@ extension OptimizedImage on Image {
         );
       },
       errorBuilder: (context, error, stackTrace) {
+        debugPrint('OptimizedImage Error URL [$url]: $error');
         return Container(
           width: width,
           height: height,
           color: Colors.grey[300],
-          child: const Icon(Icons.broken_image),
+          child: const Icon(Icons.broken_image, color: Colors.grey),
         );
       },
     );
-  }
 }

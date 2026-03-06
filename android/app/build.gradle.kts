@@ -35,9 +35,14 @@ android {
 
     buildTypes {
         release {
-            // Optimización de recursos para que el APK final sea pequeño
-            isMinifyEnabled = false 
-            isShrinkResources = false
+            // Feature 15: Code Obfuscation Prep (R8)
+            // Activates R8 shrinking and obfuscation to prevent reverse engineering
+            isMinifyEnabled = true 
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("debug")
         }
         

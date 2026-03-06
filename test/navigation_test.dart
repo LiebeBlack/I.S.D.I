@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/home_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/level_select_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/levels/level1/level1_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/levels/level2/level2_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/levels/level3/level3_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/levels/level4/level4_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/levels/level5/level5_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/profile_setup_screen.dart';
+import 'package:isla_digital/features/parental_dashboard/presentation/pages/parental_dashboard_screen.dart';
 import 'package:isla_digital/main.dart';
-import 'package:isla_digital/presentation/views/levels/level1/level1_screen.dart';
-import 'package:isla_digital/presentation/views/levels/level2/level2_screen.dart';
-import 'package:isla_digital/presentation/views/levels/level3/level3_screen.dart';
-import 'package:isla_digital/presentation/views/levels/level4/level4_screen.dart';
-import 'package:isla_digital/presentation/views/levels/level5/level5_screen.dart';
-import 'package:isla_digital/presentation/views/screens/home_screen.dart';
-import 'package:isla_digital/presentation/views/screens/level_select_screen.dart';
-import 'package:isla_digital/presentation/views/screens/parental_dashboard_screen.dart';
-import 'package:isla_digital/presentation/views/screens/profile_setup_screen.dart';
 
 /// Tests de navegación para verificar el flujo entre pantallas y niveles
 void main() {
@@ -436,14 +436,12 @@ class BigButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   @override
-  Widget build(BuildContext context) {
-    return ElevatedButton.icon(
+  Widget build(BuildContext context) => ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(icon),
       label: Text(label),
       style: ElevatedButton.styleFrom(backgroundColor: color),
     );
-  }
 }
 
 /// Mock de IslandProgressBar para los tests
@@ -459,8 +457,7 @@ class IslandProgressBar extends StatelessWidget {
   final Color? fillColor;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         if (label != null) Text(label!),
         LinearProgressIndicator(
@@ -470,7 +467,6 @@ class IslandProgressBar extends StatelessWidget {
         ),
       ],
     );
-  }
 }
 
 /// Mock de StepIndicator para los tests
@@ -486,11 +482,9 @@ class StepIndicator extends StatelessWidget {
   final Color? activeColor;
 
   @override
-  Widget build(BuildContext context) {
-    return Row(
+  Widget build(BuildContext context) => Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(totalSteps, (index) {
-        return Container(
+      children: List.generate(totalSteps, (index) => Container(
           width: 16,
           height: 16,
           margin: const EdgeInsets.symmetric(horizontal: 4),
@@ -500,8 +494,6 @@ class StepIndicator extends StatelessWidget {
                 ? (activeColor ?? Colors.green)
                 : Colors.grey,
           ),
-        );
-      }),
+        )),
     );
-  }
 }

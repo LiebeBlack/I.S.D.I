@@ -1,7 +1,7 @@
 name: isla_digital
 description: Aplicación educativa para niños de 4-6 años de Nueva Esparta, Venezuela
 publish_to: 'none'
-version: 0.5.7+1
+version: 1.7.4+1
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
@@ -37,7 +37,7 @@ dependencies:
 
   # ====================== MONITORING & LOGGING ======================
   sentry_flutter: ^9.14.0
-  logger: ^2.4.0
+  logger: ^2.6.2
 
   # ====================== UTILIDADES ======================
   intl: ^0.20.2
@@ -45,11 +45,21 @@ dependencies:
   vector_math: ^2.1.4
   connectivity_plus: ^7.0.0
   package_info_plus: ^8.3.0
+  get_it: ^8.0.2
+  equatable: ^2.0.7
+  dartz: ^0.10.1
+  flutter_secure_storage: ^10.0.0
+  freerasp: ^7.5.0
+  mixpanel_flutter: ^2.5.0
+  mockito: ^5.6.3
+  flutter_lints: ^6.0.0
+  flutter_dotenv: ^6.0.0
+  android_intent_plus: ^6.0.0
+  flutter_cache_manager: ^3.4.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
 
   # Configuración multiplataforma
   flutter_launcher_icons: ^0.14.3

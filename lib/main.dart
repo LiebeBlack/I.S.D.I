@@ -3,7 +3,7 @@
 // VERSIÓN 3.0 "ABURDA ULTRA MEGA COMPLEXA 3000" - Flutter 2026 Edition
 // =============================================================================
 // ¿Por qué esta versión es ABSURDAMENTE completa, extensa, moderna y compleja?
-// 
+//
 // 1. Arquitectura enterprise-grade:
 //    - GoRouter + Riverpod 2.5+ (declarativo, type-safe, redirects inteligentes)
 //    - ShellRoute persistente con IslandBackground (nada de builder hacky)
@@ -55,282 +55,94 @@
 // =============================================================================
 
 import 'dart:async';
-import 'dart:developer' as developer;
-import 'dart:isolate';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-<<<<<<< HEAD
-// Imports de dominio/core
-=======
-import 'package:go_router/go_router.dart';
-import 'package:logger/logger.dart';
-import 'package:package_info_plus/package_info_plus.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
-// ======================== IMPORTS DEL PROYECTO ========================
-import 'package:isla_digital/core/analytics/analytics_service.dart';
-import 'package:isla_digital/core/config/app_config.dart';
-import 'package:isla_digital/core/config/flavor.dart';
-import 'package:isla_digital/core/constants/app_constants.dart';
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
+import 'package:isla_digital/core/services/analytics_service.dart';
 import 'package:isla_digital/core/services/services.dart';
 import 'package:isla_digital/core/theme/app_theme.dart';
-import 'package:isla_digital/core/utils/error_boundary.dart';
-import 'package:isla_digital/core/utils/isolate_helper.dart';
-import 'package:isla_digital/core/utils/page_transitions.dart';
-import 'package:isla_digital/core/utils/performance_monitor.dart';
-import 'package:isla_digital/presentation/providers/app_providers.dart';
-<<<<<<< HEAD
-import 'package:isla_digital/presentation/views/levels/events/special_event_level.dart';
-import 'package:isla_digital/presentation/views/screens/advanced_profile_screen.dart';
-import 'package:isla_digital/presentation/views/screens/advanced_settings_screen.dart';
-// Imports de vistas
-=======
-import 'package:isla_digital/presentation/providers/router_provider.dart';
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
-import 'package:isla_digital/presentation/views/screens/home_screen.dart';
-import 'package:isla_digital/presentation/views/screens/level_select_screen.dart';
-import 'package:isla_digital/presentation/views/screens/onboarding_screen.dart';
-import 'package:isla_digital/presentation/views/screens/parental_dashboard_screen.dart';
-import 'package:isla_digital/presentation/views/screens/profile_setup_screen.dart';
-import 'package:isla_digital/presentation/views/screens/showcase_screen.dart';
-import 'package:isla_digital/presentation/widgets/island_background.dart';
-import 'package:isla_digital/presentation/widgets/loading_splash.dart';
+import 'package:isla_digital/core/widgets/widgets.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/home_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/level_select_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/onboarding_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/profile_setup_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/pages/showcase_screen.dart';
+import 'package:isla_digital/features/learning_cpa/presentation/providers/profile_provider.dart';
+import 'package:isla_digital/features/parental_dashboard/presentation/pages/advanced_profile_screen.dart';
+import 'package:isla_digital/features/parental_dashboard/presentation/pages/advanced_settings_screen.dart';
+import 'package:isla_digital/features/parental_dashboard/presentation/pages/parental_dashboard_screen.dart';
+import 'package:isla_digital/injection_container.dart' as di;
+import 'package:sentry_flutter/sentry_flutter.dart';
 
-<<<<<<< HEAD
+
 void main() async {
-  // 1. Garantizar que los canales de plataforma estén listos
-  WidgetsFlutterBinding.ensureInitialized();
+  // Sentry and runZonedGuarded integration for total observability
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = 'https://mock-sentry-dsn.ingest.sentry.io/1234567'; // TODO: Move to .env
+      options.tracesSampleRate = 1.0;
+      options.attachStacktrace = true;
+    },
+    appRunner: () => runZonedGuarded(
+      () async {
+        WidgetsFlutterBinding.ensureInitialized();
+        
+        // Ensure Firebase setup before relying on Crashlytics/Analytics
+        try {
+          await Firebase.initializeApp();
+          FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+        } catch (e) {
+          LoggingService.w('Firebase initialization skipped or failed: $e');
+        }
 
-  // 2. Forzar orientación vertical ANTES de cualquier renderizado
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
+        // Initialize Dependency Injection & Telemetry
+        await EnvironmentConfig.initialize();
+        await di.init();
+        await AnalyticsService.initialize();
 
-  // 3. Configuración estética del sistema
-  _configureSystemUI();
+        // Critical orientations
+        await SystemChrome.setPreferredOrientations([
+          DeviceOrientation.portraitUp,
+          DeviceOrientation.portraitDown,
+        ]);
 
-  // 4. Inicialización de servicios
+        await _bootstrap();
+
+        runApp(
+          const ProviderScope(
+            child: IslaDigitalApp(),
+          ),
+        );
+      },
+      (error, stack) async {
+        await LoggingService.e('💀 UNCAUGHT ZONE ERROR', error, stack);
+      },
+    ),
+  );
+}
+
+Future<void> _bootstrap() async {
   try {
+    await SecurityService.initialize();
+    AppLifecycleObserver.instance.initialize(); // Listen for background tasks
     await Future.wait([
       LocalStorageService.initialize(),
       BackgroundMusicService.initialize(),
+      AssetPreloaderService.preWarmCriticalAssets(),
     ]);
-  } catch (e, stackTrace) {
-    debugPrint('Critical Initialization Error: $e\n$stackTrace');
-=======
-// ======================== LOGGER GLOBAL ========================
-final logger = Logger(
-  printer: PrettyPrinter(
-    methodCount: 0,
-    errorMethodCount: 8,
-    lineLength: 120,
-    colors: true,
-    printEmojis: true,
-    printTime: true,
-  ),
-);
-
-// ======================== PROVIDER OBSERVER ULTRA ========================
-class IslaDigitalProviderObserver extends ProviderObserver {
-  @override
-  void didUpdateProvider(
-    ProviderBase<Object?> provider,
-    Object? previousValue,
-    Object? newValue,
-    ProviderContainer container,
-  ) {
-    logger.i('🔄 PROVIDER UPDATE: ${provider.name ?? provider.runtimeType} '
-        '→ ${newValue.runtimeType}');
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
+  } catch (e, stack) {
+    // Blindaje (Zero-Errors): Log but don't crash — partial bootstrap is acceptable
+    LoggingService.e('Bootstrap partial failure', e, stack);
   }
 
-  @override
-  void providerDidFail(
-    ProviderBase<Object?> provider,
-    Object error,
-    StackTrace stackTrace,
-    ProviderContainer container,
-  ) {
-    logger.e('💥 PROVIDER FAILED: ${provider.name}', error: error, stackTrace: stackTrace);
-    Sentry.captureException(error, stackTrace: stackTrace);
-  }
-}
-
-// ======================== APP LIFECYCLE OBSERVER ========================
-class IslaAppLifecycleObserver with WidgetsBindingObserver {
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    logger.d('📱 APP LIFECYCLE: $state');
-    switch (state) {
-      case AppLifecycleState.paused:
-        BackgroundMusicService.pause();
-        break;
-      case AppLifecycleState.resumed:
-        BackgroundMusicService.resume();
-        break;
-      case AppLifecycleState.detached:
-        LocalStorageService.saveSession();
-        break;
-      default:
-    }
-  }
-}
-
-// ======================== MAIN - EL ORQUESTADOR ========================
-void main() async {
-  // 1. Capturamos TODO antes de que Flutter empiece
-  await runZonedGuarded(
-    () async {
-      // Garantizar bindings
-      WidgetsFlutterBinding.ensureInitialized();
-
-      // Configuración extrema de UI
-      await _configureUltraSystemUI();
-
-      // Inicialización por fases (ultra moderna)
-      await _bootstrapPhase1(); // Sync + critical
-      await _bootstrapPhase2(); // Async services + isolates
-      await _bootstrapPhase3(); // Firebase + Crashlytics + Sentry
-
-      // Inicializamos Riverpod observer + lifecycle
-      final observer = IslaAppLifecycleObserver();
-      WidgetsBinding.instance.addObserver(observer);
-
-      // ¡Lanzamos la bestia!
-      runApp(
-        const ProviderScope(
-          observers: [IslaDigitalProviderObserver()],
-          child: ErrorBoundary(
-            child: IslaDigitalApp(),
-          ),
-        ),
-      );
-    },
-    (error, stack) {
-      logger.e('💀 UNCAUGHT ZONE ERROR', error: error, stackTrace: stack);
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      Sentry.captureException(error, stackTrace: stack);
-    },
-  );
-}
-
-// ======================== FASE 1: CRÍTICA ========================
-Future<void> _bootstrapPhase1() async {
-  logger.i('🚀 BOOTSTRAP PHASE 1 - Critical Sync');
-  await Future.wait([
-    LocalStorageService.initialize(),
-    PackageInfo.fromPlatform().then((info) {
-      AppConfig.instance.version = info.version;
-      logger.i('📦 APP VERSION: ${info.version} (${info.buildNumber})');
-    }),
-  ]);
-}
-
-// ======================== FASE 2: HEAVY EN ISOLATE ========================
-Future<void> _bootstrapPhase2() async {
-  logger.i('⚙️ BOOTSTRAP PHASE 2 - Heavy Isolate');
-  final completer = Completer<void>();
-
-  await IsolateHelper.runInIsolate(() async {
-    await Future.wait([
-      BackgroundMusicService.initialize(),
-      AnalyticsService.initialize(),
-      PerformanceMonitor.start(),
-    ]);
-    return true;
-  }).then((_) => completer.complete());
-
-  await completer.future;
-}
-
-// ======================== FASE 3: CLOUD ========================
-Future<void> _bootstrapPhase3() async {
-  logger.i('☁️ BOOTSTRAP PHASE 3 - Cloud Services');
-  await Firebase.initializeApp(
-    options: AppConfig.firebaseOptions,
-  );
-
-  if (!kIsWeb) {
-    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-  }
-
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = AppConfig.sentryDsn;
-      options.tracesSampleRate = 1.0;
-      options.environment = Flavor.current.name;
-    },
-    appRunner: () {}, // ya estamos corriendo
-  );
-
-  // Preload assets en background
-  await _preloadAllAssets();
-}
-
-// ======================== PRELOAD DE ASSETS (absurdo) ========================
-Future<void> _preloadAllAssets() async {
-  logger.i('🖼️ PRELOADING ASSETS...');
-  final assetBundle = rootBundle;
-  await Future.wait([
-    assetBundle.load('assets/images/island_background.webp'),
-    assetBundle.load('assets/sounds/ambient_ocean.mp3'),
-    assetBundle.load('assets/animations/loading.riv'),
-  ]);
-  logger.i('✅ ASSETS PRELOADED');
-}
-
-// ======================== SYSTEM UI ULTRA INMERSIVA ========================
-Future<void> _configureUltraSystemUI() async {
-  // Edge-to-Edge total (Android 12+)
-  await SystemChrome.setEnabledSystemUIMode(
-    SystemUiMode.edgeToEdge,
-    overlays: [SystemUiOverlay.top],
-  );
-
-  // Dynamic Color + Material You
-  final brightness = WidgetsBinding.instance.platformDispatcher.platformBrightness;
-  SystemChrome.setSystemUIOverlayStyle(
-    SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: brightness == Brightness.light ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarDividerColor: Colors.transparent,
-      systemNavigationBarIconBrightness: brightness == Brightness.light ? Brightness.dark : Brightness.light,
-      systemStatusBarContrastEnforced: false,
-    ),
-  );
-
-  // Lock landscape + sensor
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
-
-  // Custom scroll behavior global (sin glow en web)
-  ScrollConfiguration.of(WidgetsBinding.instance.rootElement!).copyWith(
-    scrollBehavior: const ScrollBehavior().copyWith(
-      physics: const BouncingScrollPhysics(),
-      overscroll: false,
-    ),
-  );
-}
-
-<<<<<<< HEAD
-void _configureSystemUI() {
+  // System UI Configuration — safe to run independently
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
     statusBarIconBrightness: Brightness.dark,
     systemNavigationBarColor: Colors.transparent,
-    systemNavigationBarDividerColor: Colors.transparent,
     systemNavigationBarIconBrightness: Brightness.dark,
   ));
 }
@@ -338,214 +150,43 @@ void _configureSystemUI() {
 class IslaDigitalApp extends ConsumerWidget {
   const IslaDigitalApp({super.key});
 
-  static const String routeHome = '/home';
-  static const String routeProfile = '/profile';
-  static const String routeLevels = '/levels';
-  static const String routeParental = '/parental';
-  static const String routeShowcase = '/showcase';
-  static const String routeOnboarding = '/onboarding';
-  static const String routeAdvancedSettings = '/advanced_settings';
-  static const String routeAdvancedProfile = '/advanced_profile';
-  static const String routeEvent = '/event';
-
-=======
-// ======================== APP ROOT - GO ROUTER + SHELL ========================
-class IslaDigitalApp extends ConsumerWidget {
-  const IslaDigitalApp({super.key});
-
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(goRouterProvider);
-    final profileAsync = ref.watch(currentProfileProvider);
+    final profile = ref.watch(currentProfileProvider);
 
-    return MaterialApp.router(
-      title: 'Isla Digital',
-      debugShowCheckedModeBanner: false,
-      theme: IslaThemes.lightTheme,
-<<<<<<< HEAD
-
-      // Si no hay perfil, mostramos el Onboarding inmersivo. Si hay, a la Home.
-      initialRoute: profile == null ? routeOnboarding : routeHome,
-
-=======
-      darkTheme: IslaThemes.darkTheme,
-      themeMode: ThemeMode.light, // puedes exponerlo en provider
-
-      // GO ROUTER 2026
-      routerConfig: router,
-
-      // Builder para errores globales + splash
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
-      builder: (context, child) {
-        return Scaffold(
-          resizeToAvoidBottomInset: false,
-          body: Stack(
-            children: [
-<<<<<<< HEAD
-              const IslandBackground(),
-              if (child != null) child,
-=======
-              // Fondo persistente (gracias a ShellRoute)
-              const IslandBackground(),
-              // Child protegido
-              if (child != null)
-                profileAsync.when(
-                  data: (_) => child,
-                  loading: () => const LoadingSplash(),
-                  error: (e, _) => _fatalErrorWidget(e),
-                ),
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-<<<<<<< HEAD
-  /// Manejador de rutas con transiciones.
-  Route<dynamic>? _onGenerateRoute(RouteSettings settings) {
-    // Definimos qué widget corresponde a cada ruta
-    Widget getScreen() {
-      switch (settings.name) {
-        case routeHome:
-          return const HomeScreen();
-        case routeProfile:
-          return const ProfileSetupScreen();
-        case routeLevels:
-          return const LevelSelectScreen();
-        case routeParental:
-          return const ParentalDashboardScreen();
-        case routeShowcase:
-          return const ShowcaseScreen();
-        case routeOnboarding:
-          return const OnboardingScreen();
-        case routeAdvancedSettings:
-          return const AdvancedSettingsScreen();
-        case routeAdvancedProfile:
-          return const AdvancedProfileScreen();
-        case routeEvent:
-          return const SpecialEventLevel();
-        default:
-          return _errorWidget();
-=======
-  Widget _fatalErrorWidget(Object error) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.error_outline, size: 80, color: Colors.red),
-          const SizedBox(height: 20),
-          Text('¡Ups! Algo explotó en la isla', style: Theme.of(context).textTheme.headlineMedium),
-          TextButton(
-            onPressed: () => SystemNavigator.pop(),
-            child: const Text('Reiniciar Isla'),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ======================== PROVIDER DEL ROUTER (EL CORAZÓN) ========================
-// (En presentation/providers/router_provider.dart pero lo mostramos aquí por claridad)
-final goRouterProvider = Provider<GoRouter>((ref) {
-  final profile = ref.watch(currentProfileProvider);
-
-  return GoRouter(
-    initialLocation: profile == null ? AppRoutes.profile : AppRoutes.home,
-    debugLogDiagnostics: kDebugMode,
-    restorationScopeId: 'isla_digital_router',
-    observers: [
-      SentryNavigatorObserver(),
-    ],
-    redirect: (context, state) {
-      final hasProfile = profile != null;
-      final goingToProfile = state.uri.path == AppRoutes.profile;
-
-      if (!hasProfile && !goingToProfile) {
-        return AppRoutes.profile;
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
-      }
-      if (hasProfile && goingToProfile) {
-        return AppRoutes.home;
-      }
-      return null;
-    },
-
-    // SHELL ROUTE para mantener IslandBackground en TODAS las pantallas
-    routes: [
-      ShellRoute(
-        builder: (context, state, child) => child,
-        routes: [
-          GoRoute(
-            path: AppRoutes.home,
-            pageBuilder: (context, state) => buildFadeSlidePage(const HomeScreen(), state),
-          ),
-          GoRoute(
-            path: AppRoutes.profile,
-            pageBuilder: (context, state) => buildFadeSlidePage(const ProfileSetupScreen(), state),
-          ),
-          GoRoute(
-            path: AppRoutes.levels,
-            pageBuilder: (context, state) => buildFadeSlidePage(const LevelSelectScreen(), state),
-          ),
-          GoRoute(
-            path: AppRoutes.parental,
-            pageBuilder: (context, state) => buildFadeSlidePage(const ParentalDashboardScreen(), state),
-          ),
-          GoRoute(
-            path: AppRoutes.showcase,
-            pageBuilder: (context, state) => buildFadeSlidePage(const ShowcaseScreen(), state),
-          ),
-        ],
-      ),
-    ],
-
-<<<<<<< HEAD
-  Widget _errorWidget() {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Error')),
-      body: const Center(child: Text('La página solicitada no existe.')),
-    );
-  }
-=======
-    // Error page ultra bonita
-    errorBuilder: (context, state) => Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text('🌋 La isla se hundió...', style: TextStyle(fontSize: 32)),
-            Text('Error: ${state.error}'),
-            ElevatedButton(
-              onPressed: () => context.go(AppRoutes.home),
-              child: const Text('Volver a la playa'),
-            ),
-          ],
+    return SessionTimeoutManager(
+      child: MaterialApp(
+        title: 'Isla Digital',
+        debugShowCheckedModeBanner: false,
+        theme: DynamicThemingEngine.lightTheme,
+        // Feature 10: Custom Scroll Behavior for performance
+        scrollBehavior: const MaterialScrollBehavior().copyWith(
+          physics: const BouncingScrollPhysics(parent: AlwaysScrollableScrollPhysics()),
+          overscroll: false, // Disables glowing overscroll effect which causes jank on older devices
         ),
+        home: profile == null ? const OnboardingScreen() : const HomeScreen(),
+        builder: (context, child) => NetworkConnectivityOverlay(
+            child: Scaffold(
+              resizeToAvoidBottomInset: false,
+              body: Stack(
+                children: [
+                  const IslandBackground(),
+                  if (child != null) child,
+                ],
+              ),
+            ),
+          ),
+        routes: {
+          '/home': (context) => const HomeScreen(),
+          '/profile': (context) => const ProfileSetupScreen(),
+          '/levels': (context) => const LevelSelectScreen(),
+          '/parental': (context) => const ParentalDashboardScreen(),
+          '/showcase': (context) => const ShowcaseScreen(),
+          '/onboarding': (context) => const OnboardingScreen(),
+          '/advanced_settings': (context) => const AdvancedSettingsScreen(),
+          '/advanced_profile': (context) => const AdvancedProfileScreen(),
+        },
       ),
-    ),
-  );
-});
-
-// ======================== CONSTANTS (para no hardcodear) ========================
-class AppRoutes {
-  static const home = '/home';
-  static const profile = '/profile';
-  static const levels = '/levels';
-  static const parental = '/parental';
-  static const showcase = '/showcase';
-}
-
-// Helper para transiciones custom (ya lo tenías)
-CustomTransitionPage<dynamic> buildFadeSlidePage(Widget child, GoRouterState state) {
-  return CustomTransitionPage(
-    key: state.pageKey,
-    child: child,
-    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
-        FadeSlideRoute(page: child).buildTransitions(context, animation, secondaryAnimation, child),
-  );
->>>>>>> 239bd7c5ecd6395865be8dd1b6de5f961fd5370e
+    );
+  }
 }
